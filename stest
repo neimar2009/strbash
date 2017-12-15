@@ -1,0 +1,56 @@
+#!/bin/bash
+#
+
+## Teste para 'lsf'
+
+			#mvar=`./lsf`
+			#IFS="
+			#"
+			#if [ "$mvar" != "" ] ; then
+			#    for FILE in $mvar; do
+			#        echo $i $FILE
+			#    done
+			#fi
+
+#IFS="
+#"
+#p=`pwd`
+#echo "$p"
+#echo " "
+#for FILE in $(./lsf ./\*); do
+#    echo $FILE
+#done
+
+## Fim de teste 'lsf'
+
+## Teste para strcutup
+
+#	sctname=`strcutup $1 /`
+#	sctpath=`strcuttail $1 /`
+#	if [[ "$sctname" = "$sctpath" ]]; then
+#		sctpath="./"
+#	fi
+#	echo p - $sctpath
+#	echo n - $sctname
+#
+#	exit
+#
+#	mp=`pwd`
+#	echo 1 - $mp
+#	mvar=`strcuttail $mp /`
+#	echo 2 - $mvar
+#	mvar=`strcutup $mp /`
+#	echo 3 - $mvar
+
+## Fim de teste strcutup
+
+## Teste para strsube
+
+mvar=`./ssube "-a * *.sh *.a *.d" "-a"`
+#echo $mvar
+if [ $mvar -eq 0 ]; then
+	echo "-a encontrado."
+else echo "-a não encontrado."
+fi
+#echo $mvar
+## Fim de teste strsube

@@ -1,0 +1,127 @@
+#!/bin/bash
+#
+
+appName=${0##*'/'}
+
+list="scriptslist"
+readme="readme.txt"
+documents="$HOME/.usr/local/bashscripts/"
+binpath="$HOME/.usr/bin/"
+SBENV_param1="parametro1"
+TRUE=1
+FALSE=0
+
+prnt() { 
+    scriptsread="$1"
+    local p=$HOME"/.bash_profile"
+    if [ -f $scriptsread ]; then
+        LINES=`cat $scriptsread 2>&1`
+        local IFS="
+"
+        for LINE in $LINES; do
+            [ ! $LINE == ${LINE/$p/''} ] && echo $LINE
+        done
+        # Fazer uma cópia reserva de '.bash_profile'
+        #`cp p $documents`
+        # for LINE in $LINES; do
+        #     [ ! $LINE == ${LINE/$p/''} ] && echo $LINE
+        # done
+
+    fi
+}
+
+setupPath() {
+    
+	local path=${1%/}
+    local p=$HOME"/.bash_profile"
+    local IFS="
+"
+    if [ -f $p ]; then
+        LINES=`cat $p 2>&1`
+        for LINE in $LINES; do
+            [ ! $LINE = ${LINE/$path/''} ] && return 0
+        done
+    fi
+
+    # Obtem a data que será incluido no texto, e na extensão do arquivo.
+    corrdata=`date +%d" de "%B" de "%Y" as "%H:%M:%S`
+    bashProfileOld=$p"_"`date +%Y-%m-%d"_at_"%H:%M:%S`
+    # Efetua a cópia de antes da alteração.
+    `cp $p $bashProfileOld`
+    # Inclui as alterações no arquivo de perfil.
+    echo ' '  >> $p
+    echo '## Foi gerado uma cópia do perfil em '$corrdata  >> $p
+    echo 'export PATH=$PATH:'${path}  >> $p
+    echo '##'  >> $p
+    # source ${p} <= este comando duplica os camonhos já existentes. Não deve ser usado
+    export PATH="$PATH:${path}"
+    return 1
+    #  Retono 0 indica que nada foi alterado; 1 indica que houve alteração
+}
+
+exclude_path() {
+
+	local path=${1%/}
+
+    PATH=${PATH/path/''}
+    PATH=${PATH/'::'/':'}
+	PATH=${PATH%':'}
+    
+    echo &PATH
+    #export PATH="${PATH}"
+
+}
+
+showInfo() {
+
+    if [ -e $documents$1".info" ]; then
+        source $documents$1".info" $1
+    fi    
+}
+
+showReadMe() {
+
+    if [ -f $documents$readme ]; then
+        IFS="
+"
+        echo ""
+        echo "====== Conteúdo do arquivo 'readme' ======"
+        echo ""
+        LINES=`cat $documents$readme 2>&1`
+        for LINE in $LINES; do
+            echo $LINE
+        done
+        echo ""
+        echo "==========================================="
+        echo ""
+        return 1
+    else
+        echo "Arquivo 'readme.txt' não encontrado!"
+        echo ""
+        return 0
+    fi
+}
+
+
+
+case "$1" in
+    --source | "" )  return 0;; 
+    -p|--path ) setupPath "$2";;
+    -pD )       exclude_path "$2";;
+	-d|--docs ) echo $documents;;
+	-l|--list ) echo $list;;
+	-dl )       echo $documents$list;;
+	-dr )       echo $documents$readme;;
+	-db )       echo $binpath;;
+	-e|--env )  echo $0;;
+   #-f )        echo prnt "$2";;
+    -r|--read ) echo $readme;;
+    -sr|--showread ) showReadMe;;
+    -h|--help ) showInfo $appName;;
+    * ) showInfo $1;;
+esac
+
+# unset prnt
+# unset setupPath
+# unset exclude_path
+

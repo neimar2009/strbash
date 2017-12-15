@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+
+# fe -> File Exist?
+
+## Responde se existe algum arquivo no diretório indicado.
+#  É usado IFS para ser ignorado espaço e tabulação, e considerar
+#  apenas o 'newline' como separador.
+
+IFSb=IFS
+IFS="
+"
+e=0
+FILES=`eval ls '$@' 2>&1`
+# A busca é feita mesmo se houver erro na linha anterior.
+for FILE in $FILES; do
+    if [ -f $FILE ]; then
+        e=1
+        break
+    fi
+done
+IFS=IFSb
+echo $e

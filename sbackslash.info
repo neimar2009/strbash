@@ -1,0 +1,30 @@
+
+apphelp() {
+
+	appName=${1##*'/'}
+
+    echo ""
+    echo -e "\033[32;1mSinopse:\033[m"
+    echo -e "\t\033[1m${appName}\033[m string"
+    echo ""
+    echo -e "\033[32;1mDescrição:\033[m"
+    echo -e "\t    \033[1m${appName}\033[m é uma extensão do comando \033[1mschsub\033[m."
+    echo -e "\t    Inclui uma contra barra (\033[1m \\ \033[m) na posição"
+    echo -e "\timediatamente anterior ao espaço. \033[1m\" \"\033[m."
+
+    sctinfo=$documents$list
+    if [ -f $sctinfo ]; then
+        echo -e "\t    Comandos pertencentes a este pacote de scripts:"
+        echo -e "\t    \033[1m"`cat $sctinfo`"\033[m"
+    fi
+
+    echo -e "\033[32;1mExemplo:\033[m"
+    echo -e "\t${appName} \"string\""
+    echo -e "\t${appName} \"\$string\""
+    echo -e "\t${appName} \"\$path\""
+    echo ""
+
+}
+
+apphelp $1
+

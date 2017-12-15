@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+
+## schsub -> String Change Sub String
+
+[ "$1" = "" ] || [ "$2" = "" ] && exit 128
+ARG="$1"
+## Para compatibilidade com 'dash' do Raspberry
+let i=${#1}-1
+let t=${#2}
+while (( $i >= 0 )) ; do
+    if [ "${ARG:$i:t}" = "$2" ]; then
+        ARG=${ARG:0:$i}$3${ARG:$((i+t))}
+    fi
+    ((i--))
+done
+echo "$ARG"
