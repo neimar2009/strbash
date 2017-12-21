@@ -5,13 +5,15 @@ appName=${0##*'/'}
 
 list="scriptslist"
 readme="readme.txt"
-documents="$HOME/.usr/local/bashscripts/"
-binpath="$HOME/.usr/bin/"
-SBENV_param1="parametro1"
+#documents="$HOME/.usr/local/bashscripts/"
+documents="/usr/local/bashscripts/"
+#binpath="$HOME/.usr/bin/"
+binpath="/usr/bin/"
+SBSUPPORT_param1="parametro1"
 TRUE=1
 FALSE=0
 
-prnt() { 
+prnt() {
     scriptsread="$1"
     local p=$HOME"/.bash_profile"
     if [ -f $scriptsread ]; then
@@ -19,9 +21,10 @@ prnt() {
         local IFS="
 "
         for LINE in $LINES; do
+            # Imprime a LINE se $p não estiver contido em LINE.
             [ ! $LINE == ${LINE/$p/''} ] && echo $LINE
         done
-        # Fazer uma cópia reserva de '.bash_profile'
+        # Faze uma cópia reserva de '.bash_profile'
         #`cp p $documents`
         # for LINE in $LINES; do
         #     [ ! $LINE == ${LINE/$p/''} ] && echo $LINE
@@ -39,7 +42,8 @@ setupPath() {
     if [ -f $p ]; then
         LINES=`cat $p 2>&1`
         for LINE in $LINES; do
-            [ ! $LINE = ${LINE/$path/''} ] && return 0
+            # Retorna 0 se $path estiver contido em LINE.
+            [ ! $LINE == ${LINE/$path/''} ] && return 0
         done
     fi
 

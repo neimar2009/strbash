@@ -26,5 +26,5 @@ Versões:
 - O script 'installscript' agora proporciona a instalação de todos os scripts
   do pacote, para isto basta que estejam listados no arquivo 'scripslist'.
 - Foram feitos ajustes no texto de ajuda.
-- Foi incluido o script 'sbenv', o qual retorna os caminhos dos quais o
+- Foi incluido o script 'sbsupport', o qual retorna os caminhos dos quais o
   conjunto de script dependem.

@@ -5,7 +5,7 @@
 # Opção --help
 
 appName=${0##*'/'}
-source ./sbenv "--source"
+source ./sbsupport "--source"
 
 #fdocuments="/opt/local/bashscripts/" # Destino da lista de script instalados.
 #scriptsinfo=$fdocuments"scriptsinfo" # Lista de scripts já instalados.
@@ -41,13 +41,13 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     fi
 
     echo -e "\033[32;1mExemplos:\033[m"
-    echo -e "\tsudo $AppName"
-    echo -e "\tsudo $AppName fls"
-    echo -e "\tsudo $AppName /fe"
-    echo -e "\tsudo $AppName ./scutup"
-    echo -e "\tsudo $AppName ./dir/scuttail"
-    echo -e "\tsudo $AppName ~/ssube"
-    echo -e "\t$AppName -h"
+    echo -e "\tsudo $appName"
+    echo -e "\tsudo $appName fls"
+    echo -e "\tsudo $appName /fe"
+    echo -e "\tsudo $appName ./scutup"
+    echo -e "\tsudo $appName ./dir/scuttail"
+    echo -e "\tsudo $appName ~/ssube"
+    echo -e "\t$appName -h"
     echo ""
     exit
 fi
@@ -55,6 +55,9 @@ fi
 ### Opção para apresentar o arquivo 'reademe.txt'
 if  [ "$1" = "-r" ] || [ "$1" = "--read" ]; then
     scriptsread=$documents$readme
+    if [ ! -f $scriptsread ]; then
+        scriptsread=$readme
+    fi
     if [ -f $scriptsread ]; then
         IFS="
 "
@@ -69,7 +72,7 @@ if  [ "$1" = "-r" ] || [ "$1" = "--read" ]; then
         echo "==========================================="
         echo ""
     else
-        echo "Arquivo 'readme.txt' não encontrado em `sh sbenv -d`"
+        echo "Arquivo 'readme.txt' não encontrado em `sh sbsupport -d`"
         echo ""
     fi
     exit
@@ -241,14 +244,14 @@ else
     # fi
 fi
 
-# A cada instalação o arquivo 'readme.txt' e 'sbenv' é atualizado.
+# A cada instalação o arquivo 'readme.txt' e 'sbsupport' é atualizado.
 f=$sourcedir$readme
 if [ -f $f ]; then
     `cp $f $documents`
 fi
 #echo $f
 
-# f=$sourcedir$(f_sbenv)
+# f=$sourcedir$(f_sbsupport)
 # if [ -f $f ]; then
 #     `cp -p $f $(f_scripts)`
 # fi
