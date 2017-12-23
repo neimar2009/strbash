@@ -3,10 +3,14 @@
 
 appName=${0##*'/'}
 
-list="scriptslist"
+list="sblist"
 readme="readme.txt"
 #documents="$HOME/.usr/local/bashscripts/"
-documents="/usr/local/bashscripts/"
+# documents="/usr/local/bashscripts/"
+if [[ ! -d $documents ]]; then
+    documents="./info/"
+fi
+
 #binpath="$HOME/.usr/bin/"
 binpath="/usr/bin/"
 SBSUPPORT_param1="parametro1"
@@ -83,18 +87,25 @@ showInfo() {
     fi    
 }
 
-showReadMe() {
+showTextFile() {
 
-    if [ -f $documents$readme ]; then
-        IFS="
+    IFS="
 "
-        echo ""
-        echo "====== Conteúdo do arquivo 'readme' ======"
-        echo ""
-        LINES=`cat $documents$readme 2>&1`
+    if [[ -f $1 ]]; then
+        LINES=`cat $1 2>&1`
         for LINE in $LINES; do
             echo $LINE
         done
+    fi
+}
+
+showReadMe() {
+
+    if [ -f $documents$readme ]; then
+        echo ""
+        echo "====== Conteúdo do arquivo 'readme' ======"
+        echo ""
+        showTextFile $documents$readme 
         echo ""
         echo "==========================================="
         echo ""
@@ -102,27 +113,31 @@ showReadMe() {
     else
         echo "Arquivo 'readme.txt' não encontrado!"
         echo ""
+        echo `pwd`
+        echo $documents$readme
         return 0
     fi
 }
 
-
-
 case "$1" in
-    --source | "" )  return 0;; 
-    -p|--path ) setupPath "$2";;
-    -pD )       exclude_path "$2";;
-	-d|--docs ) echo $documents;;
-	-l|--list ) echo $list;;
-	-dl )       echo $documents$list;;
-	-dr )       echo $documents$readme;;
-	-db )       echo $binpath;;
-	-e|--env )  echo $0;;
-   #-f )        echo prnt "$2";;
-    -r|--read ) echo $readme;;
-    -sr|--showread ) showReadMe;;
-    -h|--help ) showInfo $appName;;
-    * ) showInfo $1;;
+    --source | "" )     if [[ $0 = $appName ]]; then
+                            exit 0
+                        else
+                            return 0
+                        fi;;
+    --pathConfig )      setupPath "$2";;
+    --pathDelete )      exclude_path "$2";;
+	--pathDocs )        echo $documents;;
+	--list )            echo $list;;
+	--pathList )        echo $documents$list;;
+	--pathReadme )      echo $documents$readme;;
+	--pathBin )         echo $binpath;;
+	--env )             echo $0 $appName;;
+   #-f )                echo prnt "$2";;
+    --readme )          showReadMe;;
+    --print )           showTextFile "$2";;
+    --help )            showInfo $appName;;
+    * )                 showInfo $1;;
 esac
 
 # unset prnt

@@ -1,9 +1,12 @@
 #!/bin/bash
 #
 
-## scutup -> Strin Cut Up
+## scutup -> String Cut Up
 
-#source sbenv --source
+if [ "$1" = "--help" ] || [ "$1" = "--readme" ]; then
+    source ./sbsupport "$1"
+    exit
+fi
 
 ARG=$1
 [ "$3" = "" ] && let count=1 || count=$3

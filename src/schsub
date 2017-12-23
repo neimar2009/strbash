@@ -3,7 +3,12 @@
 
 ## schsub -> String Change Sub String
 
-[ "$1" = "" ] || [ "$2" = "" ] && exit 128
+if [ "$1" = "--help" ] || [ "$1" = "--readme" ]; then
+	source ./sbsupport "$1"
+	exit
+fi
+
+[ "$1" = "" ] || [ $'2' = "" ] && exit 128
 ARG="$1"
 ## Para compatibilidade com 'dash' do Raspberry
 let i=${#1}-1

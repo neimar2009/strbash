@@ -3,22 +3,54 @@
 
 ## fls -> file ls
 
+if [ "$1" = "--help" ] || [ "$1" = "--readme" ]; then
+	source ./sbsupport "$1"
+	exit
+fi
 
 #TODO: Providenciar a verificação de vários tipos de arquivos
 #      ao mesmo tempo. $1$2 $1$3 $1$4 e assim por diante.
 #      $1 indica o diretório. Os demais aos arquivos.
+
+dir=$@
+
+## Retira os argumentos de comando
+for d in $dir; do
+	if [[ ${d#"-"} = $d ]]; then
+		break
+	fi
+done
+
+## Resolve o problema do ponto no final.
+d=${d%"."}
+
+## Resolve o problema da falta da contra-barra no final de diretório.
+if [ -d $d > /dev/null 2>&1 ] && [ $d = ${d%"/"} ]; then
+	d=$d"/"
+fi
+
+## Se for arquivo então esvazia $d
+if [[ -f $d ]]; then
+	d=""
+fi
 
 ## É usado IFS para ser ignorado espaço e tabulação, e considerar
 #  apenas o 'linefeed' como separador.
 IFSb=IFS
 IFS="
 "
+
+## Obtém uma lista dos arquivo em FILES
 FILES=`eval ls '$@' 2>&1`
+
+## A busca é feita mesmo se houver erro na linha anterior.
 for FILE in $FILES; do
-    if [ -f $FILE ]; then
-        # O retorno será apenas o arquivo,
+    if [ -f $d$FILE ]; then
+        # O retorno será apenas do arquivo,
         # sem a indicação do diretório.
         echo ${FILE##*'/'}
     fi
 done
+
+## Retorna o separdor padrão
 IFS=IFSb

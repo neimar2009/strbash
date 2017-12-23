@@ -7,17 +7,58 @@
 #  É usado IFS para ser ignorado espaço e tabulação, e considerar
 #  apenas o 'newline' como separador.
 
+if [ "$1" = "--help" ] || [ "$1" = "--readme" ]; then
+	# appName=${0##*'/'}
+	# appPath=${0%%'/'$appName}
+	# appPath=`pwd`${appPath#"."}
+	# echo $appPath
+	# echo $appName
+	source ./sbsupport "$1"
+	exit
+fi
+
+dir=$@
+
+## Retira os argumentos de comando
+for d in $dir; do
+	if [[ ${d#"-"} = $d ]]; then
+		break
+	fi
+done
+
+## Resolve o problema do ponto no final.
+d=${d%"."}
+
+## Resolve o problema da falta da contra-barra no final de diretório.
+if [ -d $d > /dev/null 2>&1 ] && [ $d = ${d%"/"} ]; then
+	d=$d"/"
+fi
+
+## Se for arquivo então esvazia $d
+if [[ -f $d ]]; then
+	d=""
+fi
+
+## Contagem de arquivos encontrados
+let e=0
+
+## Salva separadores padrão e redefine separador
 IFSb=IFS
 IFS="
 "
-e=0
+
+## Obtém uma lista dos arquivo em FILES
 FILES=`eval ls '$@' 2>&1`
-# A busca é feita mesmo se houver erro na linha anterior.
+
+## A busca é feita mesmo se houver erro na linha anterior.
 for FILE in $FILES; do
-    if [ -f $FILE ]; then
-        e=1
-        break
+    if [ -f $d$FILE ]; then
+        let e++
     fi
 done
+
+## Retorna o separdor padrão
 IFS=IFSb
+
+## Retorna o resultado
 echo $e

@@ -16,13 +16,13 @@ apphelp() {
     echo -e "\to restante da \033[1mstring\033[m. A procura pelo \033[1mdelimitador\033[m é feita do fim"
     echo -e "\tao início da \033[1mstring\033[m. Seu valor é um número inteiro acima de"
     echo -e "\tzero (\033[1m0\033[m). Zero (\033[1m0\033[m) é nada, portando com zero (\033[1m0\033[m) nada é feito."
-    
+    echo ""
     sctinfo=$documents$list
     if [ -f $sctinfo ]; then
         echo -e "\t    Comandos pertencentes a este pacote de scripts:"
         echo -e "\t    \033[1m"`cat $sctinfo`"\033[m"
+        echo ""
     fi
-    
     echo -e "\033[32;1mExemplo:\033[m"
     echo -e "\t$appName \"casa de campo\" \"de \""
     echo -e "\t$appName \"casa de campo\" \" \" 2"

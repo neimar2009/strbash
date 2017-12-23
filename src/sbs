@@ -1,0 +1,28 @@
+#!/bin/bash
+#
+
+# sbs -> String back slash
+
+if [ "$1" = "--help" ] || [ "$1" = "--readme" ]; then
+    source ./sbsupport "$1"
+    exit
+fi
+
+#TODO:  Providenciar a verificação a inclusão da 
+#       contra-barra para todos dos caracteres extendidos.
+
+if [[ ! "$2" = "" ]]; then
+    ## Salva separadores padrão e redefine separador
+    P2=$1
+    shift
+    while [[ "$1" != "" ]]; do
+        echo $1
+        t="\\""$1"
+        P2=`sh ./src/schsub "$P2" "$1" "$t"`
+        shift
+    done
+    echo "$P2"
+else
+    t="\\ "
+    echo `sh ./src/schsub "$1" " " "$t"`
+fi

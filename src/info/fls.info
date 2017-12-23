@@ -9,8 +9,6 @@ apphelp() {
     echo -e "\t\033[1m${appName}\033[m opções"
     echo ""
     echo -e "\033[32;1mDescrição:\033[m"
-    echo -e "\t\033[1mopções\033[m todas as opções do comando \033[1mls\033[m"
-    echo ""
     echo -e "\t    \033[1m${appName}\033[m é uma extensão do comando \033[1mls\033[m. Retorna uma lista com"
     echo -e "\tapenas o(s) arquivo(s) do diretório(s) indicado(s). O separador"
     echo -e "\tusado entre arquivos é o \033[1mNEWLINE\033[m."
@@ -22,18 +20,22 @@ apphelp() {
     echo -e "\tno diretório."
     echo -e "\t    Não retorna aquela famigerada mensagem de erro que bloqueia a" 
     echo -e "\texecução do \033[1mscript\033[m quando o arquivo pesquisado não existe."
+    echo ""
+    echo -e "\t\033[1mopções\033[m todas as opções do comando \033[1mls\033[m"
+    echo ""
     echo -e "\033[32;1mObservação:\033[m"
     echo -e "\t    Não tem retorno quando é usado opções do \033[1mls\033[m que retornem mais"
     echo -e "\tinformações que o caminho do arquivo e o nome do arquivo."    
-    
+    echo ""    
     sctinfo=$documents$list
     if [ -f $sctinfo ]; then
         echo -e "\t    Comandos pertencentes a este pacote de scripts:"
         echo -e "\t    \033[1m"`cat $sctinfo`"\033[m"
+    echo ""
     fi
     
     echo -e "\033[32;1mExemplo:\033[m"
-    echo -e "\t{appName} ./*.ext"
+    echo -e "\t${appName} ./*.ext"
     echo ""
 
 }
