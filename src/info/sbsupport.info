@@ -5,32 +5,32 @@ apphelp() {
 	appName=${1##*'/'}
 
     echo ""
-    eval 'echo "\033[32;1mSinopse:\033[m"'
-    eval 'echo "\t\033[1m${appName}\033[m --help | --readme | --list | --pathConfig caminho |"'
-    eval 'echo "\t\t  --pathDelete caminho | --pathDocs | --pathList |"'
-    eval 'echo "\t\t  --pathReadme | --pathBin | --source | --env"'
+    echo "\033[32;1mSinopse:\033[m"
+    echo "\t\033[1m${appName}\033[m --help | --readme | --list | --pathConfig caminho |"
+    echo "\t\t  --pathDelete caminho | --pathDocs | --pathList |"
+    echo "\t\t  --pathReadme | --pathBin | --source | --env"
     echo ""
-    echo -e "\033[32;1mDescrição:\033[m"
-    echo -e '\t\033[1m--help\033[m : esta ajuda.'
-    echo -e '\t\033[1m--readme\033[m : Arquivo \033[1mReadeMe\033[m.'
-    echo -e '\t\033[1m--list\033[m : Arquivo, padrão, que contém os \033[1mbash\033[m a serem instalados.'
-    echo -e '\t\033[1m--pathConfig\033[m : configura o \033[1mpath\033[m indicado, em \033[1m.bash_profile\033[m.'
-    echo -e '\t\033[1m--pathDelete\033[m : Exclui o \033[1mpath\033[m indicado, de \033[1m.bash_profile\033[m.'
-    echo -e '\t\033[1m--pathDocs\033[m : Retorna o \033[1mpath\033[m dos arquivos de informações.'
-    echo -e '\t\033[1m--pathList\033[m : Retorna o \033[1mpath\033[m da lista de arquivos \033[1mbash\033[m.'
-    echo -e '\t\033[1m--pathReadme\033[m : Retorna o \033[1mpath\033[m do arquivo \033[1mreadme.txt\033[m.'
-    echo -e '\t\033[1m--pahtBin\033[m : Local de instalação dos arquivos \033[1mbash\033[m.'
-    echo -e '\t\033[1m--source\033[m : obtém as variáveis que definem o ambiente de trabalho.'
+    echo "\033[32;1mDescrição:\033[m"
+    echo '\t\033[1m--help\033[m : esta ajuda.'
+    echo '\t\033[1m--readme\033[m : Arquivo \033[1mReadeMe\033[m.'
+    echo '\t\033[1m--list\033[m : Arquivo, padrão, que contém os \033[1mbash\033[m a serem instalados.'
+    echo '\t\033[1m--pathConfig\033[m : configura o \033[1mpath\033[m indicado, em \033[1m.bash_profile\033[m.'
+    echo '\t\033[1m--pathDelete\033[m : Exclui o \033[1mpath\033[m indicado, de \033[1m.bash_profile\033[m.'
+    echo '\t\033[1m--pathDocs\033[m : Retorna o \033[1mpath\033[m dos arquivos de informações.'
+    echo '\t\033[1m--pathList\033[m : Retorna o \033[1mpath\033[m da lista de arquivos \033[1mbash\033[m.'
+    echo '\t\033[1m--pathReadme\033[m : Retorna o \033[1mpath\033[m do arquivo \033[1mreadme.txt\033[m.'
+    echo '\t\033[1m--pahtBin\033[m : Local de instalação dos arquivos \033[1mbash\033[m.'
+    echo '\t\033[1m--source\033[m : obtém as variáveis que definem o ambiente de trabalho.'
     echo ""
-    echo -e "\033[32;1mObservação:\033[m"
-    echo -e "\t    Os parâmetros \033[1m--pathConfig\033[m e \033[1m--pathDelete\033[m são para uso geral"
-    echo -e "\tos outros parâmetros são para uso interno auxiliares na instalação"
-    echo -e "\tdos arquivos \033[1mbash\033[m deste pacote. "
+    echo "\033[32;1mObservação:\033[m"
+    echo "\t    Os parâmetros \033[1m--pathConfig\033[m e \033[1m--pathDelete\033[m são para uso geral"
+    echo "\tos outros parâmetros são para uso interno auxiliares na instalação"
+    echo "\tdos arquivos \033[1mbash\033[m deste pacote. "
     echo ""
     sctinfo=$documents$list
     if [ -f $sctinfo ]; then
-        echo -e "\t    Comandos pertencentes a este pacote de scripts:"
-        echo -e "\t    \033[1m"`cat $sctinfo`"\033[m"
+        echo "\t    Comandos pertencentes a este pacote de scripts:"
+        echo "\t    \033[1m"`printsblist $sctinfo`"\033[m"
         echo ""
     fi
 

@@ -1,0 +1,260 @@
+#!/bin/bash
+#
+
+## installscripts
+# Opção --help
+
+if [ ! -e sbsupport ]; then
+    # appName=${0##*'/'}
+    # appPath=${0%%'/'$appName}
+    # appPath=`pwd`${appPath#"."}
+    appPath=${0%%${0##*'/'}}
+    appPath=`pwd`${appPath##*'.'}
+    cd $appPath
+    if [ ! -e sbsupport ]; then
+        echo "- source não encontrado!"
+        exit 1
+    fi
+fi
+
+if [ "$1" = "--help" ] || [ "$1" = "--readme" ]; then
+    source sbsupport "$1"
+    exit 0
+fi
+
+appName=${0##*'/'}
+
+## Variáveis usadas unicamente na instalação.
+binpath="./usr/local/strbash/"
+infoPath="info/"
+dirlist="./info/"
+
+source sbsupport "--source"
+
+#fdocuments="/opt/local/bashscripts/" # Destino da lista de script instalados.
+#scriptsinfo=$fdocuments"scriptsinfo" # Lista de scripts já instalados.
+#scriptsinfo=`f_documents`"scriptsinfo" # Lista de scripts já instalados.
+#scriptdestino"/opt/local/bin/"
+
+
+# if [ "$1" = "-p" ]; then
+#     # Ajusta o $PATH
+#     setupPath ${binpath}
+#     # [ $? = 0 ] && echo "Retono sem erro." || echo "Retorno com erro."
+# fi
+
+# if  [ "$1" = "-R" ] || [ "$1" = "--root" ]; then
+#     `sudo chmod +x ./installscripts`
+#     [ $? = 0 ] && `sudo chown root:wheel ./installscripts`
+#     exit
+# fi
+
+f_scutup() {
+
+    # let count=0
+    # ARG="$1"
+    # #echo $ARG
+    # let len1=${#ARG}
+    # let len2=${#2}
+    # let c=0
+    # ## Para compatibilidade com 'dash' do Raspberry
+    # let i=$len1-1
+    # while (( $i >= 0 )) ; do
+    #     if [ "${ARG:$i:$len2}" = "$2" ]; then
+    #         if [ $c -eq $count ]; then
+    #             ARG=${ARG:$i+$len2}
+    #             break
+    #         fi
+    #         ((c++))
+    #     fi
+    #     ((i--))
+    # done
+    #
+    # echo $ARG
+
+    echo=${1##*$2}
+}
+
+f_scuttail() {
+
+    # let count=0
+    # ARG="$1"
+    # let len1=${#ARG}
+    # let len2=${#2}
+    # let c=0
+    # ## Para compatibilidade com 'dash' do Raspberry
+    # let i=$len1-1
+    # while (( $i >= 0 )) ; do
+    #     if [ "${ARG:$i:$len2}" = "$2" ]; then
+    #         if [ $c -eq $count ]; then
+    #             ARG=${ARG:0:$i}
+    #             break
+    #         fi
+    #         ((c++))
+    #     fi
+    #     ((i--))
+    # done
+    #
+    # echo $ARG
+
+    echo=${1%$2*}
+}
+
+f_incluiNaLista() {
+
+    sctlist=$binpath$infoPath$list
+    # if ! [ -e $sctlist ]; then
+    #     `touch $sctlist`
+    # fi
+    if [ -e $sctlist ] && [ -f $sctlist ]; then
+        scripts=`cat $sctlist`
+        for scriptname in $scripts; do
+            if [ $scriptname = $1 ]; then
+                # Se o nome do script é já existe em 'scriptsinfo' então
+                # sem acrescentá-lo retorna.
+                return 0
+            fi
+        done
+    fi
+
+    # echo $1 $sctlist
+    echo "$1" >> $sctlist
+    return 0
+}
+
+f_rigthdots () {
+
+    esps=". . . . . . . . . ."
+    tam1=${#1}
+    esps=${esps:tam1}
+    echo "$esps"
+}
+
+f_installscript() {
+
+    # Verifica o caminho de onde deverá ser instalado o script,
+    # se não for indicado algum caminho, então é acressentado
+    # um ponto e barra para ser entendido que o caminho é o
+    # o próprio de onde está sendo executado o 'installscripts'.
+    sctname=${1##*'/'} # `f_scutup $1 "/"`   
+    sctpath=${1%'/'*}  # `f_scuttail $1 "/"` 
+    if [ "$sctname" = "$sctpath" ]; then
+        sctpath="./"
+    fi
+
+    # Cria o destino se ainda não existir.
+    if [ ! -d $binpath ]; then
+        `mkdir -p $binpath`
+        `mkdir -p $binpath$infoPath`
+    fi
+
+    if [[ $2 = "--readme" ]]; then
+        if [ -e $infoPath$sctname ]; then
+            `cp -fX $sctpath$infoPath$sctname $binpath$infoPath$sctname`
+        fi
+        return
+    fi
+
+    # Copia o script de acordo com o caminho onde ele está e
+    # o caminho para onde deve ser copiado.
+    `cp -fX $sctpath$sctname $binpath$sctname`
+    [ $? = 0 ] && `chmod +x $binpath$sctname` # /usr/bin/$sctname`
+    # [ $? = 0 ] && `chown root:wheel $destino$sctname` # /usr/bin/bashscripts/$sctname`
+    # [ $? = 0 ] && echo "chmod +x com sucesso"
+
+    if [ -e $infoPath$sctname.info ]; then
+        `cp -fX $sctpath$infoPath$sctname.info $binpath$infoPath$sctname.info`
+    fi
+
+    # Se a cópia for bem sucedida o nome do script é enviado para ser incluido em uma lista
+    if [ $? = 0 ]; then
+        f_incluiNaLista $1
+        echo -e "\033[1m$1\033[m `f_rigthdots $1` instalado com sucesso."
+
+    else
+        echo " ? ? Erro na instalação. ? ?"
+        echo -e "Esperimente usar a permissão de super usuário (\033[1msudo\033[m)."
+        exit
+    fi
+    #echo " "
+}
+
+f_installlist () {
+    
+    if [ -e $1 ] && [ -f $1 ]; then
+        dirlist=""
+    elif ! [ -e $dirlist$1 ] && ! [ -f $dirlist$1 ]; then
+        echo -e "\033[1mLista de scripts não encontrado!\033[m"
+        echo "-  Crie um arquivo onde conterá os nomes dos scripts a serem instalados;"
+        echo "-  só é aceitável um nome por linha;"
+        echo -e "-  na primeira linha inclua o cabeçalho \033[1m#?sblist\033[m;"
+        echo -e "-  entre conchetes \033[1m[ ]\033[m indique o diretório onde estão"
+        echo "   os scripts, tendo por base o diretório ativo;"
+        echo -e "-  na falta de indicação será considerado \033[1m[./]\033[m ou \033[1m[./info]\033[m;"
+        echo -e "-  nomeie a exstensão do arquivo para \033[1m.lst\033[m;"
+        echo "-  salve o arquivo."
+        exit
+    fi
+
+    # Captura os nomes dos arquivos a serem instalados.
+    scripts=`cat $dirlist$1`
+    # Instala cada arquivos encontrado na lista.
+    for scriptname in $scripts; do
+        if [ -e $scriptname ] && [ -f $scriptname ]; then
+            f_installscript $scriptname
+        else
+            txt1="#"
+            txt2="["
+            if [ $scriptname = "${scriptname##*$txt1}" ] && [ $scriptname = "${scriptname##*$txt2}" ]; then
+                echo -e "\033[1m$scriptname\033[m `f_rigthdots $scriptname` não existe ou não é um script!"
+            fi
+        fi
+    done
+}
+
+
+#########  Rotina principal  #########
+
+# Verifica se o primeiro argumento é um diretório.
+# if [ ! "$1" = "" ] && [ -d $1 ]; then
+#     sourcedir=$1
+#     shift
+# else
+#     sourcedir="./"
+# fi
+
+# echo `pwd`
+# echo $sourcedir
+
+if [ "$1" = "" ]; then
+
+    # Instala cada um dos scripts listados em 'slist'.
+    f_installlist $list
+else
+
+    if [ -e $1 ] && [ -f $1 ]; then
+        dirlist=""
+    elif ! [ -e $dirlist$1 ] && ! [ -f $dirlist$1 ]; then
+        echo "-  Script ou lista de scripts não foi encontrado!"
+        exit
+    fi
+    [ `isScript $dirlist$1` == 1 ] && {
+        f_installscript $dirlist$1
+    }
+    [ `isSBlist $dirlist$1` == 1 ] && {
+        f_installlist $dirlist$1
+    }
+fi
+
+# A cada instalação o arquivo 'readme.txt' e 'sbsupport' é atualizado.
+f_installscript "readme.txt" --readme
+
+
+# Ajusta o $PATH
+# setupPath ${binpath}
+
+
+
+
+
+

@@ -5,26 +5,26 @@ apphelp() {
 	appName=${1##*'/'}
 
     echo ""
-    echo -e "\033[32;1mSinopse:\033[m"
-    echo -e "\t\033[1m${appName}\033[m string substring new_substring"
+    echo "\033[32;1mSinopse:\033[m"
+    echo "\t\033[1m${appName}\033[m string substring new_substring"
     echo ""
-    echo -e "\033[32;1mDescrição:\033[m"
-    echo -e "\t    Substitui todas as \033[1msubstring\033[m encontradas em \033[1mstring\033[m, por"
-    echo -e "\t\033[1mnew_substring\033[m."
-    echo -e "\t    Na omissão de \033[1mnew_substring\033[m, \033[1m${appName}\033[m interpretará internamente"
-    echo -e "\t\033[1mnew_substring\033[m como um parâmetro vazio. Sendo assim será excluido"
-    echo -e "\ta \033[1msubstring\033[m e nada será posto em seu lugar."
+    echo "\033[32;1mDescrição:\033[m"
+    echo "\t    Substitui todas as \033[1msubstring\033[m encontradas em \033[1mstring\033[m, por"
+    echo "\t\033[1mnew_substring\033[m."
+    echo "\t    Na omissão de \033[1mnew_substring\033[m, \033[1m${appName}\033[m interpretará internamente"
+    echo "\t\033[1mnew_substring\033[m como um parâmetro vazio. Sendo assim será excluido"
+    echo "\ta \033[1msubstring\033[m e nada será posto em seu lugar."
     echo ""
     
     sctinfo=$documents$list
     if [ -f $sctinfo ]; then
-        echo -e "\t    Comandos pertencentes a este pacote de scripts:"
-        echo -e "\t    \033[1m"`cat $sctinfo`"\033[m"
-    echo ""
-    fi    
-    echo -e "\033[32;1mExemplo:\033[m"
-    echo -e "\t${appName} \"\$1\" \" \" \"\\ \""
-    echo -e "\t${appName} \"/home/casa/documentos em pdf\" \" \" \"\\ \""
+        echo "\t    Comandos pertencentes a este pacote de scripts:"
+        echo "\t    \033[1m"`printsblist $sctinfo`"\033[m"
+        echo ""
+    fi
+    echo "\033[32;1mExemplo:\033[m"
+    echo "\t${appName} \"\$1\" \" \" \"\\ \""
+    echo "\t${appName} \"/home/casa/documentos em pdf\" \" \" \"\\ \""
     echo ""
 
 }

@@ -4,8 +4,12 @@
 ## ssube
 
 if [ "$1" = "--help" ] || [ "$1" = "--readme" ]; then
-    source ./sbsupport "$1"
-    exit
+	if [ -e sbsupport ]; then
+		source sbsupport "$1"
+	else
+		echo "- Arquivo de ajuda não encontrado!"
+	fi
+	exit
 fi
 
 [ "$1" = "" ] || [ "$2" = "" ] && exit 128

@@ -5,28 +5,28 @@ apphelp() {
 	appName=${1##*'/'}
 
     echo ""
-    echo -e "\033[32;1mSinopse:\033[m"
-    echo -e "\t\033[1m${appName}\033[m string [ a..z | ... ]"
+    echo "\033[32;1mSinopse:\033[m"
+    echo "\t\033[1m${appName}\033[m string [ a..z | ... ]"
     echo ""
-    echo -e "\033[32;1mDescrição:\033[m"
-    echo -e "\t    \033[1m${appName}\033[m é uma extensão do comando \033[1mschsub\033[m."
-    echo -e "\t    Todo \033[1mcaracter\033[m que for incluído após a \033[1mstring\033[m a ser"
-    echo -e "\tmodificada, será automaticamente incluído uma contra-barra"
-    echo -e "\tna posição imediatamente anterior quando o mesmo for"
-    echo -e "\tencontrado em \033[1mstring\033[m."
-    echo -e "\t    Em caso de omissão de argumentos, contra-barra será "
-    echo -e "\tincluída anterior a todo espaço encontrado."
+    echo "\033[32;1mDescrição:\033[m"
+    echo "\t    \033[1m${appName}\033[m é uma extensão do comando \033[1mschsub\033[m."
+    echo "\t    Todo \033[1mcaracter\033[m que for incluído após a \033[1mstring\033[m a ser"
+    echo "\tmodificada, será automaticamente incluído uma contra-barra"
+    echo "\tna posição imediatamente anterior quando o mesmo for"
+    echo "\tencontrado em \033[1mstring\033[m."
+    echo "\t    Em caso de omissão de argumentos, contra-barra será "
+    echo "\tincluída anterior a todo espaço encontrado."
     echo ""
     sctinfo=$documents$list
     if [ -f $sctinfo ]; then
-        echo -e "\t    Comandos pertencentes a este pacote de scripts:"
-        echo -e "\t    \033[1m"`cat $sctinfo`"\033[m"
+        echo "\t    Comandos pertencentes a este pacote de scripts:"
+        echo "\t    \033[1m"`printsblist $sctinfo`"\033[m"
         echo ""
     fi
-    echo -e "\033[32;1mExemplo:\033[m"
-    echo -e "\t${appName} \"string\""
-    echo -e "\t${appName} \"\$string\"" \" \" a b \"c\" de
-    echo -e "\t${appName} \"\$path\""
+    echo "\033[32;1mExemplo:\033[m"
+    echo "\t${appName} \"string\""
+    echo "\t${appName} \"\$string\"" \" \" a b \"c\" de
+    echo "\t${appName} \"\$path\""
     echo ""
 
 }

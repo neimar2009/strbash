@@ -8,12 +8,11 @@
 #  apenas o 'newline' como separador.
 
 if [ "$1" = "--help" ] || [ "$1" = "--readme" ]; then
-	# appName=${0##*'/'}
-	# appPath=${0%%'/'$appName}
-	# appPath=`pwd`${appPath#"."}
-	# echo $appPath
-	# echo $appName
-	source ./sbsupport "$1"
+	if [ -e sbsupport ]; then
+		source sbsupport "$1"
+	else
+		echo "- Arquivo de ajuda não encontrado!"
+	fi
 	exit
 fi
 

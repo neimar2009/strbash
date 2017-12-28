@@ -5,22 +5,22 @@ apphelp() {
 	appName=${1##*'/'}
 
     echo ""
-    echo -e "\033[32;1mSinopse:\033[m"
-    echo -e "\t\033[1m${appName}\033[m \"texto\" \"subtexto\""
+    echo "\033[32;1mSinopse:\033[m"
+    echo "\t\033[1m${appName}\033[m \"texto\" \"subtexto\""
     echo ""
-    echo -e "\033[32;1mDescrição:\033[m"
-    echo -e "\t    Retorna o indicativo da existência do \033[1msubtexto\033[m dentro do \033[1mtexto\033[m."
-    echo -e "\t    Zero (\033[1m0\033[m) para a não existência, um (\033[1m1\033[m) para a existência."
+    echo "\033[32;1mDescrição:\033[m"
+    echo "\t    Retorna o indicativo da existência do \033[1msubtexto\033[m dentro do \033[1mtexto\033[m."
+    echo "\t    Zero (\033[1m0\033[m) para a não existência, um (\033[1m1\033[m) para a existência."
     echo ""
     sctinfo=$documents$list
     if [ -f $sctinfo ]; then
-        echo -e "\t    Comandos pertencentes a este pacote de scripts:"
-        echo -e "\t    \033[1m"`cat $sctinfo`"\033[m"
+        echo "\t    Comandos pertencentes a este pacote de scripts:"
+        echo "\t    \033[1m"`printsblist $sctinfo`"\033[m"
         echo ""
     fi
-    echo -e "\033[32;1mExemplos:\033[m"
-    echo -e "\t${appName} \"casa de campo\" \"asa de\""
-    echo -e "\t${appName} \$var \"asa de\""
+    echo "\033[32;1mExemplos:\033[m"
+    echo "\t${appName} \"casa de campo\" \"asa de\""
+    echo "\t${appName} \$var \"asa de\""
     echo ""
 
 }
