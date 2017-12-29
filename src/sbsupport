@@ -3,11 +3,13 @@
 
 appName=${0##*'/'}
 
-list="sb.lst"
+sblist="sb.lst"
 readme="readme.txt"
 bashprofile=$HOME"/.bash_profile"
 installdir="bashscripts"
-installpath="/usr/local/bashscripts/"
+binpath="/usr/local/bashscripts/"               # Local de instalação
+binpath2="~/.usr/local/bashscripts/"            # Local de instalação
+infopath="info/"
 #documents="$HOME/.usr/local/bashscripts/"
 # documents="/usr/local/bashscripts/"
 if [[ ! -d $documents ]]; then
@@ -20,6 +22,9 @@ fi
 
 TRUE=1
 FALSE=0
+
+bold="\033[1m"
+normal="\033[m"
 
 printsblist() {
 
@@ -147,9 +152,9 @@ include_path() {
     # include não pode ser vazio
     local include=${1%/}
     local exist="FALSE"
-    # local IFSb=IFS
-
     local IFS=":"
+
+    include=$(__cutdoublebars "$include")
     #  Verifica o PATH do sistema.
     PLINE=$PATH
     for PITEM in $PLINE; do
@@ -161,7 +166,6 @@ include_path() {
     for PITEM in $PLINE; do
         [ "$include" = "$PITEM" ] && { exist="TRUE"; break; }
     done
-    # IFS=$IFSb
 
     if [ "$exist" = "FALSE" ]; then
         set_path "$(prepers_path $PLINE):$include"
@@ -174,6 +178,7 @@ exclude_path() {
     local exist=""
     local IFS=":"
 
+    exclude=$(__cutdoublebars "$exclude")
     # Verifica o PATH em .bash_profile
     PLINE=$(get_path)
     for PITEM in $PLINE; do
@@ -236,8 +241,8 @@ case $(tr_lower "$1") in
     --includepath ) include_path "$2";;
     --excludepath ) exclude_path "$2";;
 	--pathdocs )    echo $documents;;
-	--list )        echo $list;;
-	--pathlist )    echo $documents$list;;
+	--list )        echo $sblist;;
+	--pathlist )    echo $documents$sblist;;
 	--pathreadme )  echo $documents$readme;;
 	--pathbin )     echo $binpath;;
 	--env )         echo $0 $appName;;
@@ -245,7 +250,7 @@ case $(tr_lower "$1") in
     --print )       showTextFile "$2";;
     --help )        showInfo $appName;;
     --test )        echo 1;;
-    * )             showInfo $1;;
+    * )             echo "- Parâmentro não reconhecido!";; # showInfo $1;;
 esac
 
 # unset prnt

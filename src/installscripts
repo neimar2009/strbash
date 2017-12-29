@@ -4,15 +4,15 @@
 ## installscripts
 # Opção --help
 
-if [ ! -e sbsupport ]; then
+if [ !  sbsupport ]; then
     # appName=${0##*'/'}
     # appPath=${0%%'/'$appName}
     # appPath=`pwd`${appPath#"."}
     appPath=${0%%${0##*'/'}}
     appPath=`pwd`${appPath##*'.'}
     cd $appPath
-    if [ ! -e sbsupport ]; then
-        echo "- source não encontrado!"
+    if [ !  sbsupport ]; then
+        echo "- Arquivo de suporte \033[1msbsupport\033[m não encontrado!"
         exit 1
     fi
 fi
@@ -24,87 +24,43 @@ fi
 
 appName=${0##*'/'}
 
-## Variáveis usadas unicamente na instalação.
-binpath="./usr/local/strbash/"
-infoPath="info/"
-dirlist="./info/"
-
 source sbsupport "--source"
 
-#fdocuments="/opt/local/bashscripts/" # Destino da lista de script instalados.
-#scriptsinfo=$fdocuments"scriptsinfo" # Lista de scripts já instalados.
+## Variáveis usadas unicamente na instalação.
+# binpath="./usr/local/strbash/"
+# infopath="info/"    #
+
+#fdocuments="/opt/local/bashscripts/"   # Destino da lista de script instalados.
+#scriptsinfo=$fdocuments"scriptsinfo"   # Lista de scripts já instalados.
 #scriptsinfo=`f_documents`"scriptsinfo" # Lista de scripts já instalados.
 #scriptdestino"/opt/local/bin/"
 
+## Torna installscripts executável.
+#
 
-# if [ "$1" = "-p" ]; then
-#     # Ajusta o $PATH
-#     setupPath ${binpath}
-#     # [ $? = 0 ] && echo "Retono sem erro." || echo "Retorno com erro."
-# fi
+if [ "$1" != "" ] && [ "$1" != ${1#-} ]; then
+    [ "$1" != ${1#--} ] && let p=2 || let p=1
+    [ $p q 2 ] && [ "$1" != ${1//root/''} ] && o="R" || [ $p q 1 ] && [ "$1" != ${1//R/''} ] && o="R"
 
-# if  [ "$1" = "-R" ] || [ "$1" = "--root" ]; then
-#     `sudo chmod +x ./installscripts`
-#     [ $? = 0 ] && `sudo chown root:wheel ./installscripts`
-#     exit
-# fi
-
-f_scutup() {
-
-    # let count=0
-    # ARG="$1"
-    # #echo $ARG
-    # let len1=${#ARG}
-    # let len2=${#2}
-    # let c=0
-    # ## Para compatibilidade com 'dash' do Raspberry
-    # let i=$len1-1
-    # while (( $i >= 0 )) ; do
-    #     if [ "${ARG:$i:$len2}" = "$2" ]; then
-    #         if [ $c -eq $count ]; then
-    #             ARG=${ARG:$i+$len2}
-    #             break
-    #         fi
-    #         ((c++))
-    #     fi
-    #     ((i--))
-    # done
-    #
-    # echo $ARG
-
-    echo=${1##*$2}
-}
-
-f_scuttail() {
-
-    # let count=0
-    # ARG="$1"
-    # let len1=${#ARG}
-    # let len2=${#2}
-    # let c=0
-    # ## Para compatibilidade com 'dash' do Raspberry
-    # let i=$len1-1
-    # while (( $i >= 0 )) ; do
-    #     if [ "${ARG:$i:$len2}" = "$2" ]; then
-    #         if [ $c -eq $count ]; then
-    #             ARG=${ARG:0:$i}
-    #             break
-    #         fi
-    #         ((c++))
-    #     fi
-    #     ((i--))
-    # done
-    #
-    # echo $ARG
-
-    echo=${1%$2*}
-}
+    if [ "$o" = "R" ] ; then
+        if [  ./installscripts ]; then
+            # `sudo chmod +x ./installscripts`
+            # [ $? = 0 ] && `sudo chown root:wheel ./installscripts`
+            echo "${bold}installscripts${normal} agora é um executável!"
+        else
+            echo "${bold}installscripts${normal} não foi encontrado!"
+        fi
+        exit
+    else
+        echo "- parâmetro não reconhecido!"
+    fi
+fi
 
 f_incluiNaLista() {
 
-    sctlist=$binpath$infoPath$list
-    # if ! [ -e $sctlist ]; then
-    #     `touch $sctlist`
+    sctlist=$binpath$infopath$sblist
+    # if [ -e $sctlist ]; then
+    #     `sudo rm $sctlist`
     # fi
     if [ -e $sctlist ] && [ -f $sctlist ]; then
         scripts=`cat $sctlist`
@@ -118,7 +74,10 @@ f_incluiNaLista() {
     fi
 
     # echo $1 $sctlist
-    echo "$1" >> $sctlist
+    `cp -fX $sctlist "./tmp.lst"`
+    echo "$1" >> ./tmp.lst
+    `sudo cp -fX "./tmp.lst" $sctlist`
+    `rm ./tmp.lst`
     return 0
 }
 
@@ -136,62 +95,92 @@ f_installscript() {
     # se não for indicado algum caminho, então é acressentado
     # um ponto e barra para ser entendido que o caminho é o
     # o próprio de onde está sendo executado o 'installscripts'.
-    sctname=${1##*'/'} # `f_scutup $1 "/"`   
-    sctpath=${1%'/'*}  # `f_scuttail $1 "/"` 
+    sctname=${1##*'/'}
+    sctpath=${1%'/'*}
     if [ "$sctname" = "$sctpath" ]; then
         sctpath="./"
+    else
+        sctpath=$sctpath/
+    fi
+
+    if [ ! -e $sctpath$sctname ]; then
+        echo -e "- Arquivo de ${bold}$sctpath$sctname${normal} não encontrado!"
+        return
     fi
 
     # Cria o destino se ainda não existir.
     if [ ! -d $binpath ]; then
-        `mkdir -p $binpath`
-        `mkdir -p $binpath$infoPath`
+        `sudo mkdir -p $binpath`
+        [ $? = 0 ] && include_path $binpath
+        [ $? = 0 ] || { echo "- Erro na criação do PATH $binpath"; exit; }
+        `sudo mkdir -p $binpath$infopath`
     fi
 
+    ## Instala o arquivo readme
     if [[ $2 = "--readme" ]]; then
-        if [ -e $infoPath$sctname ]; then
-            `cp -fX $sctpath$infoPath$sctname $binpath$infoPath$sctname`
+        if [ -e $sctpath$sctname ]; then
+            `sudo cp -fX $sctpath$sctname $binpath$infopath$sctname`
+            # echo -e "- Instalando ${bold}$sctname${normal} em ${bold}$binpath$infopath${normal}"
+            # [ $? != 0 ] && { echo "- Erro na criação do PATH $binpath"; exit; }
         fi
         return
     fi
 
     # Copia o script de acordo com o caminho onde ele está e
     # o caminho para onde deve ser copiado.
-    `cp -fX $sctpath$sctname $binpath$sctname`
-    [ $? = 0 ] && `chmod +x $binpath$sctname` # /usr/bin/$sctname`
-    # [ $? = 0 ] && `chown root:wheel $destino$sctname` # /usr/bin/bashscripts/$sctname`
-    # [ $? = 0 ] && echo "chmod +x com sucesso"
 
-    if [ -e $infoPath$sctname.info ]; then
-        `cp -fX $sctpath$infoPath$sctname.info $binpath$infoPath$sctname.info`
+    `sudo cp -fX $sctpath$sctname $binpath$sctname`
+    [ $? = 0 ] || { echo "- Erro em: cp -fX $sctpath$sctname $binpath$sctname"; return; }
+    `sudo chmod +x $binpath$sctname` # /usr/bin/$sctname`
+    
+    if [ -e $infopath$sctname.info ]; then
+        `sudo cp -fX $sctpath$infopath$sctname.info $binpath$infopath$sctname.info`
+        [ $? = 0 ] || echo -e "- Erro ao copiar o arquivos ${bold}$sctname.info${normal}"
+        # echo -e "- Instalando ${bold}$sctname.info${normal} em ${bold}$binpath$infopath${normal}"
     fi
 
     # Se a cópia for bem sucedida o nome do script é enviado para ser incluido em uma lista
     if [ $? = 0 ]; then
-        f_incluiNaLista $1
-        echo -e "\033[1m$1\033[m `f_rigthdots $1` instalado com sucesso."
-
+        f_incluiNaLista $sctname
+        echo  -e "${bold}$sctname${normal} `f_rigthdots $sctname` instalado com sucesso."
     else
         echo " ? ? Erro na instalação. ? ?"
-        echo -e "Esperimente usar a permissão de super usuário (\033[1msudo\033[m)."
+        echo -e "Esperimente usar a permissão de super usuário (${bold}sudo${normal})."
         exit
     fi
-    #echo " "
 }
 
 f_installlist () {
     
-    if [ -e $1 ] && [ -f $1 ]; then
+    
+    #  é feita uma procura em ./ e se não for encontrada então
+    #  é feita uma procura em ./info/ se não for encontrada, não existe.
+
+    local dirlist=""   # Usado na procurar a lista de scripts a serem instalados.
+    local installedreadme="FALSE"
+    local dirscript="./"          # $dirlist aponta para a lista de scripts em ./ ou ./info/;
+
+    #  com -u a lista é verificada diretamente no caminho indicado na linha de comando.
+    #  sem -u a lista é procurada no diretório de trabalho ./ e posteriormente em ./info/.
+    #
+    if [ $1 = "-u" ]; then
+        shift
         dirlist=""
-    elif ! [ -e $dirlist$1 ] && ! [ -f $dirlist$1 ]; then
-        echo -e "\033[1mLista de scripts não encontrado!\033[m"
+    else
+        dirlist="./"                    # Usado para procurar inicial.
+        if ! [ -e $dirlist$1 ]; then
+            dirlist="./info/"           # Segunda procura opcional.
+        fi
+    fi
+    if ! [ -e $dirlist$1 ]; then
+        echo "${bold}Lista de scripts não encontrado!${normal}"
         echo "-  Crie um arquivo onde conterá os nomes dos scripts a serem instalados;"
         echo "-  só é aceitável um nome por linha;"
-        echo -e "-  na primeira linha inclua o cabeçalho \033[1m#?sblist\033[m;"
-        echo -e "-  entre conchetes \033[1m[ ]\033[m indique o diretório onde estão"
+        echo "-  na primeira linha inclua o cabeçalho ${bold}#?>sblist${normal};"
+        echo "-  entre conchetes ${bold}[]${normal} indique o diretório onde estão"
         echo "   os scripts, tendo por base o diretório ativo;"
-        echo -e "-  na falta de indicação será considerado \033[1m[./]\033[m ou \033[1m[./info]\033[m;"
-        echo -e "-  nomeie a exstensão do arquivo para \033[1m.lst\033[m;"
+        echo "-  na falta de indicação será considerado ${bold}[./]${normal} ou ${normal}[./info]${normal};"
+        echo "-  nomeie a exstensão do arquivo para ${bold}.lst${normal};"
         echo "-  salve o arquivo."
         exit
     fi
@@ -201,60 +190,47 @@ f_installlist () {
     # Instala cada arquivos encontrado na lista.
     for scriptname in $scripts; do
         if [ -e $scriptname ] && [ -f $scriptname ]; then
-            f_installscript $scriptname
+            f_installscript $dirscript$scriptname
+            if [ $installedreadme = "FALSE" ] && [ -e $dirscript'readme.txt' ]; then
+                # A cada instalação o arquivo 'readme.txt' e 'sbsupport' é atualizado.
+                f_installscript $dirscript"readme.txt" --readme
+                installedreadme="TRUE"
+            fi
+            # echo -e "Simulando instalação de ${bold}$dirscript$scriptname${normal}"
         else
             txt1="#"
             txt2="["
             if [ $scriptname = "${scriptname##*$txt1}" ] && [ $scriptname = "${scriptname##*$txt2}" ]; then
-                echo -e "\033[1m$scriptname\033[m `f_rigthdots $scriptname` não existe ou não é um script!"
+                echo  "${normal}$scriptname${normal} `f_rigthdots $scriptname` não existe ou não é um script!"
+            fi
+            if [ $scriptname != "${scriptname#$txt2}" ] && [ $scriptname != "${scriptname%]}" ]; then
+                dirscript=${scriptname#[}
+                dirscript=${dirscript%]}
+                dirscript=${dirscript%'/'}/
+                # echo -e "Caminho de instalação ${bold}$dirscript${normal}"
+            # else
+            #     echo "Linha ignorada!"
             fi
         fi
     done
 }
 
-
 #########  Rotina principal  #########
-
-# Verifica se o primeiro argumento é um diretório.
-# if [ ! "$1" = "" ] && [ -d $1 ]; then
-#     sourcedir=$1
-#     shift
-# else
-#     sourcedir="./"
-# fi
-
-# echo `pwd`
-# echo $sourcedir
 
 if [ "$1" = "" ]; then
 
-    # Instala cada um dos scripts listados em 'slist'.
-    f_installlist $list
+    # Instala cada um dos scripts listados em 'sb.lst'.
+    f_installlist $sblist
+
 else
 
-    if [ -e $1 ] && [ -f $1 ]; then
-        dirlist=""
-    elif ! [ -e $dirlist$1 ] && ! [ -f $dirlist$1 ]; then
+    if ! [ -e $1 ] || ! [ -f $1 ]; then
         echo "-  Script ou lista de scripts não foi encontrado!"
         exit
     fi
-    [ `isScript $dirlist$1` == 1 ] && {
-        f_installscript $dirlist$1
-    }
-    [ `isSBlist $dirlist$1` == 1 ] && {
-        f_installlist $dirlist$1
-    }
+
+    # echo "lista encontrada"
+    [ `isScript $1` == 1 ] && { f_installscript $1; exit; }  || echo "- O arquivo indicado não é um script!"
+    [ `isSBlist $1` == 1 ] && f_installlist -u $1 || echo "- O arquivo indicado não é uma lista de script!"
+
 fi
-
-# A cada instalação o arquivo 'readme.txt' e 'sbsupport' é atualizado.
-f_installscript "readme.txt" --readme
-
-
-# Ajusta o $PATH
-# setupPath ${binpath}
-
-
-
-
-
-
