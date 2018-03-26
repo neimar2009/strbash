@@ -4,12 +4,8 @@
 ## schsub -> String Change Sub String
 
 if [ "$1" = "--help" ] || [ "$1" = "--readme" ]; then
-	if [ -e sbsupport ]; then
-		source sbsupport "$1"
-	else
-		echo "- Arquivo de ajuda não encontrado!"
-	fi
-	exit
+	source sbsupport "$1" 2>&1
+	exit $?
 fi
 
 [ "$1" = "" ] || [ $'2' = "" ] && exit 128
@@ -17,9 +13,12 @@ ARG="$1"
 ## Para compatibilidade com 'dash' do Raspberry
 let i=${#1}-1
 let t=${#2}
+let s=${#3}
+# echo $t
 while (( $i >= 0 )) ; do
-    if [ "${ARG:$i:t}" = "$2" ]; then
-        ARG=${ARG:0:$i}$3${ARG:$((i+t))}
+    if [ "${ARG:i:t}" = "$2" ]; then
+        ARG="${ARG:0:((i))}$3${ARG:((i+t))}"
+        let i=$((s - t + i))
     fi
     ((i--))
 done

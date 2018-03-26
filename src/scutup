@@ -4,12 +4,8 @@
 ## scutup -> String Cut Up
 
 if [ "$1" = "--help" ] || [ "$1" = "--readme" ]; then
-    if [ -e sbsupport ]; then
-        source sbsupport "$1"
-    else
-        echo "- Arquivo de ajuda não encontrado!"
-    fi
-    exit
+    source sbsupport "$1" 2>&1
+    exit $?
 fi
 
 ARG=$1

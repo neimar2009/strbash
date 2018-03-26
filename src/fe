@@ -8,12 +8,8 @@
 #  apenas o 'newline' como separador.
 
 if [ "$1" = "--help" ] || [ "$1" = "--readme" ]; then
-	if [ -e sbsupport ]; then
-		source sbsupport "$1"
-	else
-		echo "- Arquivo de ajuda não encontrado!"
-	fi
-	exit
+	source sbsupport "$1" 2>&1
+	exit $?
 fi
 
 dir=$@
@@ -47,7 +43,7 @@ IFS="
 "
 
 ## Obtém uma lista dos arquivo em FILES
-FILES=`eval ls '$@' 2>&1`
+FILES=`eval ls "$@" 2>&1`
 
 ## A busca é feita mesmo se houver erro na linha anterior.
 for FILE in $FILES; do

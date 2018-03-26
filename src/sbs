@@ -4,12 +4,8 @@
 # sbs -> String back slash
 
 if [ "$1" = "--help" ] || [ "$1" = "--readme" ]; then
-    if [ -e sbsupport ]; then
-        source sbsupport "$1"
-    else
-        echo "- Arquivo de ajuda não encontrado!"
-    fi
-    exit
+    source sbsupport "$1" 2>&1
+    exit $?
 fi
 
 #TODO:  Providenciar a verificação a inclusão da 
@@ -22,11 +18,11 @@ if [[ ! "$2" = "" ]]; then
     while [[ "$1" != "" ]]; do
         echo $1
         t="\\""$1"
-        P2=`sh ./src/schsub "$P2" "$1" "$t"`
+        P2=`schsub "$P2" "$1" "$t"`
         shift
     done
     echo "$P2"
 else
     t="\\ "
-    echo `sh ./src/schsub "$1" " " "$t"`
+    echo `schsub "$1" " " "$t"`
 fi

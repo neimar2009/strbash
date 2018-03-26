@@ -3,88 +3,49 @@
 
 appName=${0##*'/'}
 
-sblist="sb.lst"
-readme="readme.txt"
-bashprofile=$HOME"/.bash_profile"
-installdir="bashscripts"
+sblist="sb.lst"                                 # Arquivo que contém a lista a ser instalada
+readme="readme.txt"                             # Arquivo readme
+bashprofile=$HOME"/.bash_profile"               # .bash_profile e seu caminho
+installdir="bashscripts"                        # Nove do diretório para os scripts
 binpath="/usr/local/bashscripts/"               # Local de instalação
 binpath2="~/.usr/local/bashscripts/"            # Local de instalação
-infopath="info/"
-#documents="$HOME/.usr/local/bashscripts/"
-# documents="/usr/local/bashscripts/"
-if [[ ! -d $documents ]]; then
-    documents="./info/"
+dirinfo="info/"                                 # Diretório dos arquivos de informações
+
+##  Verifica se o pacote já está instalado
+if [[ -e $binpath$dirinfo$readme ]]; then
+    infopath=$binpath$dirinfo       #<- Pacote instalado.
+else
+    infopath="./"$dirinfo           #<- Pacote não instalado.
 fi
 
-#binpath="$HOME/.usr/bin/"
-# binpath="/usr/bin/"
-# SBSUPPORT_param1="parametro1"
-
+## Variáveis de uso geral
 TRUE=1
 FALSE=0
 
 bold="\033[1m"
 normal="\033[m"
 
-printsblist() {
+###############################################################################
+##
+##  Métodos usados geral 
+##
 
-    LINES=`cat $1 2>&1`
-    for LINE in $LINES; do
-        [ $LINE == ${LINE##*'['} ] && [ $LINE == ${LINE##*'#'} ] && {
-            RET="$RET $LINE"
-        }
-    done
+##  Ajusta o path contido em .bash_profile. Tira a variável PATH= e $PATH.
+#   Retorna apenas os caminhos pertencentes a .bash_profile
+__prepers_path() {
 
-    echo $RET
+    PL=$1
+    PL=${PL#'PATH='}
+    PL=${PL//'$PATH'/''}
+    PL=${PL//'::'/':'}    # Troca dois pontos duplicados por apena um.
+    PL=${PL%':'}          # Tira dois pontos do fim da linha.
+    PL=${PL#':'}          # Tira dois pontos do início da linha.
+    [ "$PL" = "" ] && PL='$PATH' || PL='$PATH:'"$PL"
+    echo $PL
 }
 
-__cutdoublebars () {
-
-    local path
-    local l=""
-
-    # path=${1//'::'/':'} <- Does not work
-
-    for ((i=0;i<=${#1};i++)); do
-        b=${1:(($i)):((1))}
-        [ "$b" = "$l" ] && [ "$b" = "/" ] || path=$path$b
-        l=$b
-    done
-    echo "$path"
-}
-
-concatpath () {
-
-    for p in $@; do
-        path=$path/$p
-    done
-    [ -d $path ] && path=$path'/'
-    echo $(__cutdoublebars "$path")
-}
-
-isScript() {
-
-    local txt="#!/bin/bash"
-    LINES=`cat $1`
-    for LINE in $LINES; do
-        [ $LINE != "${LINE##*$txt}" ] && { echo 1; exit 1; }
-    done
-    echo 0
-    exit 0
-}
-
-isSBlist() {
-
-    local txt="#?>sblist"
-    LINES=`cat $1`
-    for LINE in $LINES; do
-        [ $LINE != "${LINE##*$txt}" ] && { echo 1; exit 1; }
-    done
-    echo 0
-    exit 0
-}
-
-get_path () {
+##  Retorna todo o conteúdo do PATH, (?)sem a variável PATH(?).
+__get_path () {
 
     local IFS="
 "
@@ -101,13 +62,15 @@ get_path () {
     fi
 }
 
-set_path () {
+##  Grava um novo path em .bash_profile. Salva uma cópia .bash_profile
+#   antigo como a data da operação acrescendado ao nome.
+__set_path () {
 
     local IFS="
 "
     if [[ -e $bashprofile ]]; then
 
-        # Obtem a data que será incluido no texto, e na extensão do arquivo.
+        # Obtém a data que será incluido no texto, e na extensão do arquivo.
         # corrdata=`date +%d" de "%B" de "%Y" as "%H:%M:%S`
         bashProfileOld=$bashprofile"__"$(date +%Y-%m-%d"_at_"%H:%M:%S)
 
@@ -132,22 +95,46 @@ set_path () {
     fi
 }
 
-prepers_path() {
+##  Elimina baras duplicadas deixando apena uma barra.
+__cutdoublebars () {
 
-    PL=$1
-    PL=${PL#'PATH='}
-    PL=${PL//'$PATH'/''}
-    PL=${PL//'::'/':'}    # Troca dois pontos duplicados por apena um.
-    PL=${PL%':'}          # Tira dois pontos do fim da linha.
-    PL=${PL#':'}          # Tira dois pontos do início da linha.
-    [ "$PL" = "" ] && PL='$PATH' || PL='$PATH:'"$PL"
-    echo $PL
+    local path
+    local l=""
+
+    # path=${1//'//'/'/'} <- Does not work
+
+    for ((i=0;i<=${#1};i++)); do
+        b=${1:(($i)):((1))}
+        [ "$b" = "$l" ] && [ "$b" = "/" ] || path="$path$b"
+        l=$b
+    done
+    echo "$path"
+}
+
+###############################################################################
+##
+##  Métodos complementares para uso externo.
+##
+
+##  Concatena várias partes de um caminho montando o caminho real.
+concatpath () {
+
+    for p in $@; do
+        [ "$path" = "" ] && path="$p" || path="$path/$p"
+    done
+    path=$(__cutdoublebars "$path")
+    [ -d $path ] && [ $path = ${path%/} ] && path=$path'/'
+    echo "$path"
+}
+
+homepath () {
+
+    [ ${1#"~"} != "$1" ] && {
+        echo $(concatpath "$HOME" ${1#"~"})
+    }
 }
 
 include_path() {
-
-## Atual PATH
-# /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/local/CrossPack-AVR/bin
 
     # include não pode ser vazio
     local include=${1%/}
@@ -162,25 +149,25 @@ include_path() {
     done
 
     # Verifica o PATH em .bash_profile
-    PLINE=$(get_path)
+    PLINE=$(__get_path)
     for PITEM in $PLINE; do
         [ "$include" = "$PITEM" ] && { exist="TRUE"; break; }
     done
 
     if [ "$exist" = "FALSE" ]; then
-        set_path "$(prepers_path $PLINE):$include"
+        __set_path "$(__prepers_path $PLINE):$include"
     fi
 }
 
 exclude_path() {
 
-	local exclude=${1%/}
+    local exclude=${1%/}
     local exist=""
     local IFS=":"
 
     exclude=$(__cutdoublebars "$exclude")
     # Verifica o PATH em .bash_profile
-    PLINE=$(get_path)
+    PLINE=$(__get_path)
     for PITEM in $PLINE; do
         [ "$exclude" = "$PITEM" ] && { exist="TRUE"; break; }
     done
@@ -188,14 +175,62 @@ exclude_path() {
 
     if [ "$exist" = "TRUE" ]; then
         PLINE=${PLINE//"$exclude"/''}     # Exclui o caminho indicado.
-        set_path $(prepers_path $PLINE)
+        __set_path $(__prepers_path $PLINE)
     fi
 }
 
+###############################################################################
+##
+##  Métodos para manutenção do pacote
+##
+
+##  Do pacote: Mostra a lista de scripts instalados.
+printsblist() {
+
+    LINES=`cat $1 2>&1`
+    for LINE in $LINES; do
+        [ $LINE == ${LINE##*'['} ] && [ $LINE == ${LINE##*'#'} ] && {
+            RET="$RET $LINE"
+        }
+    done
+
+    echo $RET
+}
+
+##  Do pacote: Verifica se o arquivo a ser instalado é um script.
+#   Retorna falso ou verdadeiro; 0 ou 1.
+isScript() {
+
+    local txt="#!/bin/bash"
+    LINES=`cat $1`
+    for LINE in $LINES; do
+        [ $LINE != "${LINE##*$txt}" ] && { echo 1; exit 1; }
+    done
+    echo 0
+    exit 0
+}
+
+##  Do pacote: Verifica se o arquivo a ser instalado é uma lista de scripts.
+#   Retorna falso ou verdadeiro; 0 ou 1.
+isSBlist() {
+
+    local txt="#?>sblist"
+    LINES=`cat $1`
+    for LINE in $LINES; do
+        [ $LINE != "${LINE##*$txt}" ] && { echo 1; exit 1; }
+    done
+    echo 0
+    exit 0
+}
+
+##  Do pacote: Mostra o arquivo info relativo ao script ativo.
 showInfo() {
 
-    if [ -e $documents$1".info" ]; then
-        source $documents$1".info" $1
+    if [ -e $infopath$1".info" ]; then
+        source $infopath$1".info" $1
+    else
+        echo "- Arquivo de ajuda não encontrado!"
+        return 1
     fi    
 }
 
@@ -211,13 +246,14 @@ showTextFile() {
     fi
 }
 
+##  Do pacote: Mostra o arquivo readme relativo ao script ativo.
 showReadMe() {
 
-    if [ -f $documents$readme ]; then
+    if [ -f  $infopath$readme ]; then
         echo ""
         echo "====== Conteúdo do arquivo 'readme' ======"
         echo ""
-        showTextFile $documents$readme 
+        showTextFile "$infopath$readme"
         echo ""
         echo "==========================================="
         echo ""
@@ -225,30 +261,29 @@ showReadMe() {
     else
         echo "Arquivo 'readme.txt' não encontrado!"
         echo ""
-        echo `pwd`
-        echo $documents$readme
         return 0
     fi
 }
 
 tr_lower () {
-    echo $1 | tr "[:upper:]" "[:lower:]"
+    echo $1 | tr "[:upper:]" "[:lower:]" 2>&1
 }
 
 case $(tr_lower "$1") in
-    --source | "" ) [ $0 = $appName ] && exit 0 || return 0 ;;
+    --source | "" ) [ "sbsupport" = $appName ] && exit 0 || return 0 ;;
     --concatpath )  shift; concatpath $@ ;;
+    --homepath )    shift; homepath $@ ;;
     --includepath ) include_path "$2";;
     --excludepath ) exclude_path "$2";;
-	--pathdocs )    echo $documents;;
+	--pathdocs )    echo $infopath;;
 	--list )        echo $sblist;;
-	--pathlist )    echo $documents$sblist;;
-	--pathreadme )  echo $documents$readme;;
+	--pathlist )    echo $infopath$sblist;;
+	--pathreadme )  echo $infopath$readme;;
 	--pathbin )     echo $binpath;;
 	--env )         echo $0 $appName;;
     --readme )      showReadMe;;
-    --print )       showTextFile "$2";;
     --help )        showInfo $appName;;
+    --print )       showTextFile "$2";;
     --test )        echo 1;;
     * )             echo "- Parâmentro não reconhecido!";; # showInfo $1;;
 esac

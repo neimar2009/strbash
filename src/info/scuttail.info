@@ -5,27 +5,27 @@ apphelp() {
 	appName=${1##*'/'}
 
     echo ""
-    echo "\033[32;1mSinopse:\033[m"
-    echo "\t\033[1m${appName}\033[m string delimitador [incidência]"   
+    echo -e "\033[32;1mSinopse:\033[m"
+    echo -e "\t\033[1m${appName}\033[m string delimitador [incidência]"   
     echo ""
-    echo "\033[32;1mDescrição:\033[m"
-    echo "\t    \033[1m${appName}\033[m retorna do início da \033[1mstring\033[m até a \033[1mincidência\033[m"
-    echo "\tdo \033[1mdelimitador\033[m. O \033[1mdelimitador\033[m encontrado não retorna." 
-    echo "\t    \033[1mincidência\033[m tem como valor padrão um (\033[1m1\033[m), e diz quantas vezes"
-    echo "\tdeve ser encontrado o \033[1mdelimitador\033[m para então apartir daí cortar"
-    echo "\to restante da \033[1mstring\033[m. A procura pelo \033[1mdelimitador\033[m é feita do fim"
-    echo "\tao início da \033[1mstring\033[m. Seu valor é um número inteiro acima de"
-    echo "\tzero (\033[1m0\033[m). Zero (\033[1m0\033[m) é nada, portando com zero (\033[1m0\033[m) nada é feito."
+    echo -e "\033[32;1mDescrição:\033[m"
+    echo -e "\t    \033[1m${appName}\033[m retorna do início da \033[1mstring\033[m até a \033[1mincidência\033[m"
+    echo -e "\tdo \033[1mdelimitador\033[m. O \033[1mdelimitador\033[m encontrado não retorna." 
+    echo -e "\t    \033[1mincidência\033[m tem como valor padrão um (\033[1m1\033[m), e diz quantas vezes"
+    echo -e "\tdeve ser encontrado o \033[1mdelimitador\033[m para então apartir daí cortar"
+    echo -e "\to restante da \033[1mstring\033[m. A procura pelo \033[1mdelimitador\033[m é feita do fim"
+    echo -e "\tao início da \033[1mstring\033[m. Seu valor é um número inteiro acima de"
+    echo -e "\tzero (\033[1m0\033[m). Zero (\033[1m0\033[m) é nada, portando com zero (\033[1m0\033[m) nada é feito."
     echo ""
-    sctinfo=$documents$list
+    sctinfo=$infopath$sblist
     if [ -f $sctinfo ]; then
-        echo "\t    Comandos pertencentes a este pacote de scripts:"
-        echo "\t    \033[1m"`printsblist $sctinfo`"\033[m"
+        echo -e "\t    Comandos pertencentes a este pacote de scripts:"
+        echo -e "\t    \033[1m"`printsblist $sctinfo`"\033[m"
         echo ""
     fi
-    echo "\033[32;1mExemplo:\033[m"
-    echo "\t${appName} \"casa de campo\" \"de \""
-    echo "\t${appName} \"casa de campo\" \" \" 2"
+    echo -e "\033[32;1mExemplo:\033[m"
+    echo -e "\t${appName} \"casa de campo\" \"de \""
+    echo -e "\t${appName} \"casa de campo\" \" \" 2"
     echo ""
  
 }

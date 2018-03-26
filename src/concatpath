@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+
+## concatpath -> Concat Path
+
+if [ "$1" = "--help" ] || [ "$1" = "--readme" ]; then
+	source sbsupport "$1" 2>&1
+	exit $?
+fi
+
+## Para compatibilidade com 'dash' do Raspberry
+let i=$#
+while (( $i > 0 )) ; do
+	[ $(ssube "$1" " ") != "0" ] && { ARG=$(schsub "$1" " " "??"); } || { ARG=$1; } 
+	[ "$ARGS" = "" ] && ARGS="$ARG" || ARGS="$ARGS $ARG"
+	shift
+    ((i--))
+done
+
+ARGS=$(sbsupport --concatpath "$ARGS")
+ARGS=$(schsub "$ARGS" "??" " ")
+echo "$ARGS"

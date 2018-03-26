@@ -5,41 +5,41 @@ apphelp() {
 	appName=${1##*'/'}
 
     echo ""
-    echo "\033[32;1mSinopse:\033[m"
-    echo "\t$appName [ --help | file_script | list_scripts ]"
+    echo -e "\033[32;1mSinopse:\033[m"
+    echo -e "\t$appName [ --help | file_script | list_scripts ]"
     echo ""
-    echo "\033[32;1mDescrição:\033[m"
-    echo "\t    \033[1minstallscript\033[m instala, se indicado, um script bash ou, se"
-    echo "\tnão houver uma indicação, será instalado os scripts que estiverem"
-    echo "\tlistados no arquivo 'scriptlist' que deve estar no mesmo diretório de"
-    echo "\t'installscripts'. A instalação será no diretório \033[1m/usr/bin\033[m e o torna"
-    echo "\texecutável."
-    echo "\t    Este script exige o uso do \033[1msudo\033[m."
+    echo -e "\033[32;1mDescrição:\033[m"
+    echo -e "\t    \033[1minstallscript\033[m instala, se indicado, um script bash ou, se"
+    echo -e "\tnão houver uma indicação, será instalado os scripts que estiverem"
+    echo -e "\tlistados no arquivo 'scriptlist' que deve estar no mesmo diretório de"
+    echo -e "\t'installscripts'. A instalação será no diretório \033[1m/usr/bin\033[m e o torna"
+    echo -e "\texecutável."
+    echo -e "\t    Este script exige o uso do \033[1msudo\033[m."
     echo ""
-    echo '\t\033[1m--help\033[m : esta ajuda.'
-    echo '\t\033[1msource_file_script\033[m : nome do arquivo com script a ser instalado;'
-    echo '\t\033[1mnenhum_argumento\033[m : para instalar os scripts que estiverem listados'
-    echo '\t\t\t   em \033[1mscriptlist.txt\033[m'
+    echo -e "\t\033[1m--help\033[m : esta ajuda."
+    echo -e "\t\033[1msource_file_script\033[m : nome do arquivo com script a ser instalado;"
+    echo -e "\t\033[1mnenhum_argumento\033[m : para instalar os scripts que estiverem listados"
+    echo -e "\t\t\t   em \033[1mscriptlist.txt\033[m"
     echo ""
-    echo "\033[32;1mObservação:\033[m"
-    echo "\t    Este script de instalação devera ser substituido pelo formato"
-    echo "\tde arquivo de comandos em lote 'make'."
+    echo -e "\033[32;1mObservação:\033[m"
+    echo -e "\t    Este script de instalação devera ser substituido pelo formato"
+    echo -e "\tde arquivo de comandos em lote 'make'."
     echo ""
-    sctinfo=$documents$list
+    sctinfo=$infopath$sblist
     if [ -f $sctinfo ]; then
-        echo "\t    Comandos pertencentes a este pacote de scripts:"
-        echo "\t    \033[1m"`printsblist $sctinfo`"\033[m"
+        echo -e "\t    Comandos pertencentes a este pacote de scripts:"
+        echo -e "\t    \033[1m"`printsblist $sctinfo`"\033[m"
         echo ""
     fi
 
-    echo "\033[32;1mExemplos:\033[m"
-    echo "\tsudo $appName"
-    echo "\tsudo $appName fls"
-    echo "\tsudo $appName /fe"
-    echo "\tsudo $appName ./scutup"
-    echo "\tsudo $appName ./dir/scuttail"
-    echo "\tsudo $appName ~/ssube"
-    echo "\t$appName --help"
+    echo -e "\033[32;1mExemplos:\033[m"
+    echo -e "\tsudo $appName"
+    echo -e "\tsudo $appName fls"
+    echo -e "\tsudo $appName /fe"
+    echo -e "\tsudo $appName ./scutup"
+    echo -e "\tsudo $appName ./dir/scuttail"
+    echo -e "\tsudo $appName ~/ssube"
+    echo -e "\t$appName --help"
     echo ""
 }
 
