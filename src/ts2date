@@ -1,0 +1,147 @@
+#!/bin/bash
+#
+
+## ts2date -> timestamp to date
+
+	# https://pt.wikipedia.org/wiki/Ano
+	# Os anos têm uma duração de 365 dias, 5 horas, 48 minutos e 48 segundos aproximadamente.
+	#
+	# De 4 em 4 anos é ano bissexto. ( Isto considerando que o exedente é mais próxímo a 6 horas. )
+	# De 100 em 100 anos não é ano bissexto. { Isto compensa o arredondamento de 5h, 48m e 48s para 6h. }
+	# De 400 em 400 anos é ano bissexto. ( Corrije o tempo perdido na não correção dos 100 anos. )
+	# Prevalecem as últimas regras sobre as primeiras.[9]
+
+# https://br.answers.yahoo.com/question/index?qid=20080922170621AAq5UOM
+# Melhor resposta:  60 seguntos x 60 minutos x 24 horas x 365 dias x 100 anos = 3 bilhões,
+# 				   153 milhõs e 600 mil segundos. (3.153.600.000) 
+# Como 100 anos tem 25 dias de ANO BISSEXTO, então soma-se mais: 
+# 60 x 60 x 24 x 25 = 2.160.000 
+# O total de segundos em um século é 3.155.760.000
+
+
+# let ts=1352262312
+# dt="2012/11/07_02:25:12"
+
+# let ts=1531776477
+# dt="2018/07/16_18:27:57"
+## ---
+
+	# mn=$((ts/60))         # Minutos totais
+	# sg=$((ts-(mn*60)))    # Segundos restantes
+
+	# hr=$((mn/60))         # Horas totais
+	# mn=$((mn-(hr*60)))    # Minutos restantes
+
+	# ds=$((hr/24))         # Dias totais
+	# hr=$((hr-(ds*24)))    # Horas restantes
+
+	# ms=$((ds/30))         # Mese totais
+	# ds=$((ds-(ms*30)))    # dias restantes
+
+	# an=$((ms/12))         # Anos totais
+	# ms=$((ms-(an*12)))    # Meses restantes
+	# an=$((an+1970-1))
+
+
+# printf "timestamp = %s; %s \n%s anos, %s meses, %s dias, %s horas, %s minutos e %s segundos\n\n" $ts $dt $an $ms $ds $hr $mn $sg
+
+# statMsg=$(stat "/Users/neimar2009/Pictures/tmp/100D5100/DSC_2061.JPG")
+# if [[ -z $1 ]]; then
+# 	exit
+# fi
+
+while [[ "$1" != ${1#"-"} ]]; do
+	arg=${1:1:1}
+	case "$arg" in
+		"d" )
+			sepad=${1#"-d"};
+			# sepad=${1/"-s"/""};;
+			d="Y";;
+		"h" )
+			sepah=${1#"-h"};
+			# sepad=${1/"-s"/""};;
+			h="Y";;
+	esac
+	shift
+done
+
+if [[ -z $1 ]]; then
+	echo "- Arquivo não indicado!"
+	exit 1
+fi
+
+# statMsg=$(stat "$1")
+statMsg=$(stat -f %SB "$1")
+
+if [[ -n "$d" ]]; then
+	let i=1
+	for m in $statMsg; do
+		case $i in
+			1 )  ##  Mês $i 20
+				case "$m" in
+					"Jan" )
+						md="01";;
+					"Feb" )
+						md="02";;
+					"Mar" )
+						md="03";;
+					"Apr" )
+						md="04";;
+					"May" )
+						md="05";;
+					"Jun" )
+						md="06";;
+					"Jul" )
+						md="07";;
+					"Aug" )
+						md="08";;
+					"Sep" )
+						md="09";;
+					"Oct" )
+						md="10";;
+					"Nov" )
+						md="11";;
+					"Dec" )
+						md="12";;
+				esac;;
+			2 )  ## Dia
+				if [[ ${#m} == 1 ]]; then
+					md=$md$sepad"0"$m
+				else
+					md=$md$sepad$m
+				fi;;
+			4 )  ##  Ano
+				md=$m$sepad$md;;
+		esac
+		let i=$i+1
+	done
+fi
+
+if [[ -n "$h" ]]; then
+	let i=1
+	for m in $statMsg; do
+		case $i in
+			3 ) ## Hora
+				if [[ ( -n "$d" ) ]]; then
+					if [[ "$sepad" = " " || $sepah = " " ]]; then
+						md=$md" "
+					elif [[ -n "$sepad" || -n $sepah ]]; then
+						md=$md"_"
+					fi
+				fi
+				hr=${m//":"/$sepah};;
+		esac
+		let i=$i+1
+	done
+	md=$md$hr
+fi
+
+if [[ -n "$md" ]]; then
+	echo $md
+else
+	echo $statMsg
+fi
+
+
+
+# -----

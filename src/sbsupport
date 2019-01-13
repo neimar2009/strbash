@@ -47,8 +47,7 @@ __prepers_path() {
 ##  Retorna todo o conteúdo do PATH, (?)sem a variável PATH(?).
 __get_path () {
 
-    local IFS="
-"
+    local IFS=$'\n\r'
     if [ -e $bashprofile ]; then
         # Captura o comteúdo do PATH
         LINES=`cat $bashprofile 2>&1`
@@ -63,7 +62,7 @@ __get_path () {
 }
 
 ##  Grava um novo path em .bash_profile. Salva uma cópia .bash_profile
-#   antigo como a data da operação acrescendado ao nome.
+#   antigo com a data da operação acrescendado ao nome.
 __set_path () {
 
     local IFS="
@@ -123,6 +122,7 @@ concatpath () {
         [ "$path" = "" ] && path="$p" || path="$path/$p"
     done
     path=$(__cutdoublebars "$path")
+    # Se for path, inclui uma contra-barra ao final.
     [ -d $path ] && [ $path = ${path%/} ] && path=$path'/'
     echo "$path"
 }
